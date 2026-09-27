@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Turbulans</title>
 <style>
-body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#0b0c10;color:#f4f1ea}
+html,body{height:100%;background:#0b0c10;color:#f4f1ea;margin:0}
+body{font-family:system-ui,-apple-system,sans-serif}
 .app{max-width:430px;margin:0 auto;padding:12px 14px 28px}
 .top{display:flex;justify-content:space-between;align-items:center}
 .brand{font-weight:800;font-size:22px}.brand i{color:#e8c36a;font-style:normal}
@@ -36,9 +37,10 @@ input{width:100%;background:#12141a;color:#fff;border:1px solid #2a2d38;border-r
 <button class="tab" data-t="o">Odalar</button>
 <button class="tab" data-t="p">Profil</button>
 </nav>
-<div id="m"></div>
+<div id="m"><p class="hint">Yukleniyor...</p></div>
 </div>
 <script>
+function j(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 const P=[
 {id:"ela",n:"Ela",a:27,c:"Kadikoy",b:"Kitap, yuruyus",p:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80",r:"Bu aksam sakinim."},
 {id:"kerem",n:"Kerem",a:29,c:"Besiktas",b:"Muzik, sahil",p:"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&q=80",r:"Kahve olur."},
@@ -46,42 +48,46 @@ const P=[
 {id:"arda",n:"Arda",a:31,c:"Uskudar",b:"Sakin sohbet",p:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&q=80",r:"Kisa ve net yaz."}
 ];
 const C={start:5,text:1,note:20,call:15,gift:12};
-const S={i:0,t:Number(localStorage.ahenk_tokens||80),m:JSON.parse(localStorage.ahenk_m||"[]"),ch:JSON.parse(localStorage.ahenk_ch||"{}"),st:JSON.parse(localStorage.ahenk_st||"{}"),blk:JSON.parse(localStorage.ahenk_blk||"[]"),rep:JSON.parse(localStorage.ahenk_rep||"[]"),open:null,tab:"k",ok:localStorage.ahenk_ok==="1",name:localStorage.ahenk_nm||"",pin:localStorage.ahenk_pin||""};
-function visible(){return P.filter(x=>!S.blk.includes(x.id))}
-function save(){localStorage.ahenk_tokens=S.t;localStorage.ahenk_m=JSON.stringify(S.m);localStorage.ahenk_ch=JSON.stringify(S.ch);localStorage.ahenk_st=JSON.stringify(S.st);localStorage.ahenk_blk=JSON.stringify(S.blk);localStorage.ahenk_rep=JSON.stringify(S.rep);localStorage.ahenk_ok=S.ok?"1":"0";localStorage.ahenk_nm=S.name;localStorage.ahenk_pin=S.pin;bal.textContent=S.t}
+const S={i:0,t:Number(localStorage.getItem("ahenk_tokens")||80),m:j("ahenk_m",[]),ch:j("ahenk_ch",{}),st:j("ahenk_st",{}),blk:j("ahenk_blk",[]),rep:j("ahenk_rep",[]),open:null,tab:"k",ok:localStorage.getItem("ahenk_ok")==="1",name:localStorage.getItem("ahenk_nm")||"",pin:localStorage.getItem("ahenk_pin")||""};
+function visible(){return P.filter(function(x){return S.blk.indexOf(x.id)<0})}
+function save(){try{localStorage.setItem("ahenk_tokens",S.t);localStorage.setItem("ahenk_m",JSON.stringify(S.m));localStorage.setItem("ahenk_ch",JSON.stringify(S.ch));localStorage.setItem("ahenk_st",JSON.stringify(S.st));localStorage.setItem("ahenk_blk",JSON.stringify(S.blk));localStorage.setItem("ahenk_rep",JSON.stringify(S.rep));localStorage.setItem("ahenk_ok",S.ok?"1":"0");localStorage.setItem("ahenk_nm",S.name);localStorage.setItem("ahenk_pin",S.pin)}catch(e){}document.getElementById("bal").textContent=S.t}
 function spend(n){if(S.t<n){alert("Jeton yetersiz");shop();return false}S.t-=n;save();return true}
-function person(){const v=visible();if(!v.length)return null;return v[S.i%v.length]}
+function person(){var v=visible();if(!v.length)return null;return v[S.i%v.length]}
 function show(tab){
- S.tab=tab;document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on",b.dataset.t===tab));
- if(!S.ok){m.innerHTML=`<h2>Turbulans</h2><p class="hint">18+ prototip. Pin sadece bu telefonda durur.</p><input id="nm" placeholder="Ad" value="${S.name}"><input id="pn" placeholder="4 haneli pin" maxlength="4" inputmode="numeric"><div class="actions"><button class="btn like" id="ok">18+, kaydol</button></div>`;ok.onclick=()=>{const pin=pn.value.trim();if(pin.length<4){alert("4 haneli pin");return}S.name=nm.value.trim()||"Sen";S.pin=pin;S.ok=true;save();show("k")};return}
+ S.tab=tab;
+ document.querySelectorAll(".tab").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-t")===tab)});
+ var box=document.getElementById("m");
+ if(!S.ok){box.innerHTML="<h2>Turbulans</h2><p class='hint'>18+ prototip. Pin sadece bu telefonda durur.</p><input id='nm' placeholder='Ad' value='"+(S.name||"")+"'><input id='pn' placeholder='4 haneli pin' maxlength='4' inputmode='numeric'><div class='actions'><button class='btn like' id='ok'>18+, kaydol</button></div>";document.getElementById("ok").onclick=function(){var pin=document.getElementById("pn").value.trim();if(pin.length<4){alert("4 haneli pin");return}S.name=document.getElementById("nm").value.trim()||"Sen";S.pin=pin;S.ok=true;save();show("k")};return}
  if(tab==="k"){
-  const x=person();if(!x){m.innerHTML='<p class="hint">Gosterilecek kimse kalmadi.</p>';return}
-  m.innerHTML=`<div class="card" style="background-image:url('${x.p}')"><div class="shade"><h2>${x.n}, ${x.a}</h2><div>${x.c} · ${x.b}</div></div></div><div class="actions"><button class="btn pass" id="pass">Gec</button><button class="btn like" id="like">Uyum</button></div><div class="actions"><button class="btn bad" id="blk">Engel</button><button class="btn pass" id="rep">Sikayet</button></div><p class="hint">Sohbet ${C.start} · mesaj ${C.text} · not ${C.note} · gorusme ${C.call}/dk</p>`;
-  pass.onclick=()=>{S.i++;show("k")};
-  like.onclick=()=>{if(!S.m.includes(x.id))S.m.push(x.id);save();S.i++;show("s")};
-  blk.onclick=()=>{S.blk.push(x.id);S.m=S.m.filter(i=>i!==x.id);save();show("k")};
-  rep.onclick=()=>{S.rep.push({id:x.id,at:Date.now()});S.blk.push(x.id);save();alert("Sikayet alindi (yerel)");show("k")};
+  var x=person();if(!x){box.innerHTML="<p class='hint'>Gosterilecek kimse kalmadi.</p>";return}
+  box.innerHTML="<div class='card' style='background-image:url("+x.p+")'><div class='shade'><h2>"+x.n+", "+x.a+"</h2><div>"+x.c+" · "+x.b+"</div></div></div><div class='actions'><button class='btn pass' id='pass'>Gec</button><button class='btn like' id='like'>Uyum</button></div><div class='actions'><button class='btn bad' id='blk'>Engel</button><button class='btn pass' id='rep'>Sikayet</button></div><p class='hint'>Sohbet "+C.start+" · mesaj "+C.text+" · not "+C.note+" · gorusme "+C.call+"/dk</p>";
+  document.getElementById("pass").onclick=function(){S.i++;show("k")};
+  document.getElementById("like").onclick=function(){if(S.m.indexOf(x.id)<0)S.m.push(x.id);save();S.i++;show("s")};
+  document.getElementById("blk").onclick=function(){S.blk.push(x.id);S.m=S.m.filter(function(i){return i!==x.id});save();show("k")};
+  document.getElementById("rep").onclick=function(){S.rep.push({id:x.id,at:Date.now()});S.blk.push(x.id);save();alert("Sikayet alindi");show("k")};
  } else if(tab==="s"&&!S.open){
-  const list=S.m.filter(id=>!S.blk.includes(id));
-  if(!list.length){m.innerHTML='<p class="hint">Eslesme yok.</p>';return}
-  m.innerHTML=list.map(id=>{const x=P.find(z=>z.id===id);const last=(S.ch[id]||[]).slice(-1)[0];return `<div class="row" onclick="openChat('${id}')"><div class="ava" style="background-image:url('${x.p}')"></div><div><b>${x.n}</b><div class="hint">${last?last.t:("Ac "+C.start+" jeton")}</div></div></div>`}).join("");
+  var list=S.m.filter(function(id){return S.blk.indexOf(id)<0});
+  if(!list.length){box.innerHTML="<p class='hint'>Eslesme yok.</p>";return}
+  box.innerHTML=list.map(function(id){var p=P.filter(function(z){return z.id===id})[0];var last=(S.ch[id]||[]).slice(-1)[0];return "<div class='row' data-id='"+id+"'><div class='ava' style='background-image:url("+p.p+")'></div><div><b>"+p.n+"</b><div class='hint'>"+(last?last.t:("Ac "+C.start+" jeton"))+"</div></div></div>"}).join("");
+  box.querySelectorAll(".row").forEach(function(el){el.onclick=function(){openChat(el.getAttribute("data-id"))}});
  } else if(tab==="s"){
-  const x=P.find(z=>z.id===S.open);const msgs=S.ch[S.open]||[];
-  m.innerHTML=`<div class="row"><div class="ava" style="background-image:url('${x.p}')"></div><b>${x.n}</b></div>${msgs.map(z=>`<div class="bubble ${z.who}">${z.t}</div>`).join("")}<div class="actions" style="grid-template-columns:1fr auto"><input id="msg" placeholder="Yaz..."><button class="btn like" id="send">Git</button></div><div class="actions" style="grid-template-columns:1fr 1fr 1fr"><button class="btn pass" id="note">not</button><button class="btn pass" id="call">ara</button><button class="btn pass" id="gift">hediye</button></div><div class="actions"><button class="btn bad" id="blk2">Engel</button><button class="btn pass" id="back">Liste</button></div>`;
-  send.onclick=()=>{const v=msg.value.trim();if(!v||!spend(C.text))return;push("me",v);push("them",x.r)};
-  note.onclick=()=>{if(spend(C.note))push("me","video not")};
-  call.onclick=()=>{if(spend(C.call))push("them","1 dk gorusme")};
-  gift.onclick=()=>{if(spend(C.gift))push("me","hediye")};
-  blk2.onclick=()=>{S.blk.push(x.id);S.open=null;save();show("s")};
-  back.onclick=()=>{S.open=null;show("s")};
- } else if(tab==="o"){m.innerHTML='<div class="row"><b>Gece sohbeti</b></div><div class="row"><b>Istanbul yuruyus</b></div><p class="hint">Odalar sonra.</p>'}
- else if(tab==="p"){m.innerHTML=`<p><b>${S.name||"-"}</b></p><p class="hint">Turbulans · jeton ${S.t} · engel ${S.blk.length}</p><div class="actions" style="grid-template-columns:1fr"><button class="btn like" id="buy">Jeton al</button><button class="btn pass" id="out">Cikis</button></div>`;buy.onclick=shop;out.onclick=()=>{S.ok=false;save();show("k")}}
+  var x=P.filter(function(z){return z.id===S.open})[0];var msgs=S.ch[S.open]||[];
+  box.innerHTML="<div class='row'><div class='ava' style='background-image:url("+x.p+")'></div><b>"+x.n+"</b></div>"+msgs.map(function(z){return "<div class='bubble "+z.who+"'>"+z.t+"</div>"}).join("")+"<div class='actions' style='grid-template-columns:1fr auto'><input id='msg' placeholder='Yaz...'><button class='btn like' id='send'>Git</button></div><div class='actions' style='grid-template-columns:1fr 1fr 1fr'><button class='btn pass' id='note'>not</button><button class='btn pass' id='call'>ara</button><button class='btn pass' id='gift'>hediye</button></div><div class='actions'><button class='btn bad' id='blk2'>Engel</button><button class='btn pass' id='back'>Liste</button></div>";
+  document.getElementById("send").onclick=function(){var v=document.getElementById("msg").value.trim();if(!v||!spend(C.text))return;push("me",v);push("them",x.r)};
+  document.getElementById("note").onclick=function(){if(spend(C.note))push("me","video not")};
+  document.getElementById("call").onclick=function(){if(spend(C.call))push("them","1 dk gorusme")};
+  document.getElementById("gift").onclick=function(){if(spend(C.gift))push("me","hediye")};
+  document.getElementById("blk2").onclick=function(){S.blk.push(x.id);S.open=null;save();show("s")};
+  document.getElementById("back").onclick=function(){S.open=null;show("s")};
+ } else if(tab==="o"){box.innerHTML="<div class='row'><b>Gece sohbeti</b></div><div class='row'><b>Istanbul yuruyus</b></div><p class='hint'>Odalar sonra.</p>"}
+ else if(tab==="p"){box.innerHTML="<p><b>"+(S.name||"-")+"</b></p><p class='hint'>Turbulans · jeton "+S.t+" · engel "+S.blk.length+"</p><div class='actions' style='grid-template-columns:1fr'><button class='btn like' id='buy'>Jeton al</button><button class='btn pass' id='out'>Cikis</button></div>";document.getElementById("buy").onclick=shop;document.getElementById("out").onclick=function(){S.ok=false;save();show("k")}}
 }
 function shop(){S.t+=100;save();alert("+100 jeton (sahte)");show("p")}
 function openChat(id){if(!S.ch[id])S.ch[id]=[];if(!S.st[id]){if(!spend(C.start))return;S.st[id]=1;save()}S.open=id;show("s")}
-function push(who,t){S.ch[S.open].push({who,t});save();show("s")}
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{S.open=null;show(b.dataset.t)});
-tb.onclick=shop;save();show("k");
+function push(who,t){S.ch[S.open].push({who:who,t:t});save();show("s")}
+document.querySelectorAll(".tab").forEach(function(b){b.onclick=function(){S.open=null;show(b.getAttribute("data-t"))}});
+document.getElementById("tb").onclick=shop;
+try{save();show("k")}catch(e){document.getElementById("m").innerHTML="<p class='hint'>Hata. Profil > Cikis dene. "+e.message+"</p>"}
 </script>
 </body>
 </html>
