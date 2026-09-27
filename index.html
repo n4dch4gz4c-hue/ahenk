@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Ahenk</title>
+<title>Turbulans</title>
 <style>
 body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#0b0c10;color:#f4f1ea}
 .app{max-width:430px;margin:0 auto;padding:12px 14px 28px}
@@ -29,7 +29,7 @@ input{width:100%;background:#12141a;color:#fff;border:1px solid #2a2d38;border-r
 </head>
 <body>
 <div class="app">
-<div class="top"><div class="brand">Ahenk<i>.</i></div><button class="tokens" id="tb">&#9670; <span id="bal">80</span></button></div>
+<div class="top"><div class="brand">Turbulans<i>.</i></div><button class="tokens" id="tb">&#9670; <span id="bal">80</span></button></div>
 <nav>
 <button class="tab on" data-t="k">Kesfet</button>
 <button class="tab" data-t="s">Sohbet</button>
@@ -53,7 +53,7 @@ function spend(n){if(S.t<n){alert("Jeton yetersiz");shop();return false}S.t-=n;s
 function person(){const v=visible();if(!v.length)return null;return v[S.i%v.length]}
 function show(tab){
  S.tab=tab;document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on",b.dataset.t===tab));
- if(!S.ok){m.innerHTML=`<h2>Hesap</h2><p class="hint">18+ prototip. Pin sadece bu telefonda durur.</p><input id="nm" placeholder="Ad" value="${S.name}"><input id="pn" placeholder="4 haneli pin" maxlength="4" inputmode="numeric"><div class="actions"><button class="btn like" id="ok">18+, kaydol</button></div>`;ok.onclick=()=>{const pin=pn.value.trim();if(pin.length<4){alert("4 haneli pin");return}S.name=nm.value.trim()||"Sen";S.pin=pin;S.ok=true;save();show("k")};return}
+ if(!S.ok){m.innerHTML=`<h2>Turbulans</h2><p class="hint">18+ prototip. Pin sadece bu telefonda durur.</p><input id="nm" placeholder="Ad" value="${S.name}"><input id="pn" placeholder="4 haneli pin" maxlength="4" inputmode="numeric"><div class="actions"><button class="btn like" id="ok">18+, kaydol</button></div>`;ok.onclick=()=>{const pin=pn.value.trim();if(pin.length<4){alert("4 haneli pin");return}S.name=nm.value.trim()||"Sen";S.pin=pin;S.ok=true;save();show("k")};return}
  if(tab==="k"){
   const x=person();if(!x){m.innerHTML='<p class="hint">Gosterilecek kimse kalmadi.</p>';return}
   m.innerHTML=`<div class="card" style="background-image:url('${x.p}')"><div class="shade"><h2>${x.n}, ${x.a}</h2><div>${x.c} · ${x.b}</div></div></div><div class="actions"><button class="btn pass" id="pass">Gec</button><button class="btn like" id="like">Uyum</button></div><div class="actions"><button class="btn bad" id="blk">Engel</button><button class="btn pass" id="rep">Sikayet</button></div><p class="hint">Sohbet ${C.start} · mesaj ${C.text} · not ${C.note} · gorusme ${C.call}/dk</p>`;
@@ -75,7 +75,7 @@ function show(tab){
   blk2.onclick=()=>{S.blk.push(x.id);S.open=null;save();show("s")};
   back.onclick=()=>{S.open=null;show("s")};
  } else if(tab==="o"){m.innerHTML='<div class="row"><b>Gece sohbeti</b></div><div class="row"><b>Istanbul yuruyus</b></div><p class="hint">Odalar sonra.</p>'}
- else if(tab==="p"){m.innerHTML=`<p><b>${S.name||"-"}</b></p><p class="hint">Jeton ${S.t} · engel ${S.blk.length} · sikayet ${S.rep.length}</p><div class="actions" style="grid-template-columns:1fr"><button class="btn like" id="buy">Jeton al</button><button class="btn pass" id="out">Cikis</button></div>`;buy.onclick=shop;out.onclick=()=>{S.ok=false;save();show("k")}}
+ else if(tab==="p"){m.innerHTML=`<p><b>${S.name||"-"}</b></p><p class="hint">Turbulans · jeton ${S.t} · engel ${S.blk.length}</p><div class="actions" style="grid-template-columns:1fr"><button class="btn like" id="buy">Jeton al</button><button class="btn pass" id="out">Cikis</button></div>`;buy.onclick=shop;out.onclick=()=>{S.ok=false;save();show("k")}}
 }
 function shop(){S.t+=100;save();alert("+100 jeton (sahte)");show("p")}
 function openChat(id){if(!S.ch[id])S.ch[id]=[];if(!S.st[id]){if(!spend(C.start))return;S.st[id]=1;save()}S.open=id;show("s")}
