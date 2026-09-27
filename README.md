@@ -1,2 +1,1 @@
-# ahenk
-Ahenk sohbet uyumu prototipi
+Bu proje silindi.
