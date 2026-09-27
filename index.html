@@ -15,18 +15,21 @@ body{font-family:system-ui,-apple-system,sans-serif}
 nav{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin:12px 0}
 .tab{background:#12141a;color:#9aa0ae;border:1px solid #2a2d38;padding:9px 0}
 .tab.on{color:#fff;border-color:#4a431f}
-.card{height:390px;border-radius:22px;background-size:cover;background-position:center;position:relative;border:1px solid #2a2d38}
+.card{height:370px;border-radius:22px;background-size:cover;background-position:center;position:relative;border:1px solid #2a2d38}
 .shade{position:absolute;left:0;right:0;bottom:0;padding:16px;background:linear-gradient(transparent,#0b0c10)}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.btn{border:0;padding:13px;font-weight:700;color:#fff}
-.pass{background:#2a2d38}.like{background:#e8c36a;color:#1a1406}.bad{background:#5a2a2a}
+.btn{border:0;padding:12px;font-weight:700;color:#fff;font-size:14px}
+.pass{background:#2a2d38}.like{background:#e8c36a;color:#1a1406}.bad{background:#5a2a2a}.sup{background:#3a2a12;border:1px solid #6a5420;color:#e8c36a}
 .hint{color:#9aa0ae;font-size:12px;margin-top:10px;line-height:1.4}
 .row,.pack{display:flex;gap:10px;align-items:center;background:#15171e;border:1px solid #2a2d38;padding:10px;margin:8px 0;justify-content:space-between}
-.ava{width:48px;height:48px;border-radius:16px;background-size:cover;flex:none}
+.ava{width:48px;height:48px;border-radius:16px;background-size:cover;flex:none;position:relative}
+.dot{position:absolute;right:-2px;bottom:-2px;width:10px;height:10px;background:#6ecf9a;border:2px solid #15171e;border-radius:50%}
 .bubble{max-width:80%;padding:10px 12px;border-radius:16px;margin:6px 0;font-size:14px}
 .me{margin-left:auto;background:#3b2f14}.them{background:#22252e}
 input{width:100%;background:#12141a;color:#fff;border:1px solid #2a2d38;border-radius:12px;padding:12px;box-sizing:border-box;margin:6px 0}
-.match{text-align:center;padding:24px 8px}
+.match{text-align:center;padding:20px 8px}
+.gifts{display:flex;gap:8px}
+.gifts button{flex:1;font-size:20px;background:#12141a;border:1px solid #2a2d38;border-radius:12px;padding:10px}
 </style>
 </head>
 <body>
@@ -42,62 +45,71 @@ input{width:100%;background:#12141a;color:#fff;border:1px solid #2a2d38;border-r
 </div>
 <script>
 function j(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
-const P=[
-{id:"ela",n:"Ela",a:27,c:"Kadikoy",b:"Kitap, yuruyus",p:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80",r:"Bu aksam sakinim."},
-{id:"kerem",n:"Kerem",a:29,c:"Besiktas",b:"Muzik, sahil",p:"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&q=80",r:"Kahve olur."},
-{id:"nisa",n:"Nisa",a:24,c:"Sisli",b:"Yeni sehir",p:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&q=80",r:"Tasarimdan konusabiliriz."},
-{id:"arda",n:"Arda",a:31,c:"Uskudar",b:"Sakin sohbet",p:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&q=80",r:"Kisa ve net yaz."},
-{id:"deniz",n:"Deniz",a:26,c:"Karakoy",b:"Foto, sokak",p:"https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800&q=80",r:"Karakoy tarafiyim."},
-{id:"can",n:"Can",a:28,c:"Moda",b:"Sahaf, kahve",p:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",r:"Devam et, dinliyorum."}
+var P=[
+{id:"ela",n:"Ela",a:27,c:"Kadikoy",b:"Kitap, yuruyus",p:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80",r:"Bu aksam sakinim.",on:1},
+{id:"kerem",n:"Kerem",a:29,c:"Besiktas",b:"Muzik, sahil",p:"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&q=80",r:"Kahve olur.",on:1},
+{id:"nisa",n:"Nisa",a:24,c:"Sisli",b:"Yeni sehir",p:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&q=80",r:"Tasarimdan konusabiliriz.",on:0},
+{id:"arda",n:"Arda",a:31,c:"Uskudar",b:"Sakin sohbet",p:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&q=80",r:"Kisa ve net yaz.",on:0},
+{id:"deniz",n:"Deniz",a:26,c:"Karakoy",b:"Foto, sokak",p:"https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800&q=80",r:"Karakoy tarafiyim.",on:1},
+{id:"can",n:"Can",a:28,c:"Moda",b:"Sahaf, kahve",p:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",r:"Devam et, dinliyorum.",on:0}
 ];
-const C={start:5,text:1,note:20,call:15,gift:12,room:8};
-const S={i:0,t:Number(localStorage.getItem("ahenk_tokens")||80),m:j("ahenk_m",[]),ch:j("ahenk_ch",{}),st:j("ahenk_st",{}),blk:j("ahenk_blk",[]),rooms:j("ahenk_rooms",{}),open:null,hit:null,tab:"k",ok:localStorage.getItem("ahenk_ok")==="1",name:localStorage.getItem("ahenk_nm")||""};
+var C={start:5,text:1,note:20,call:15,gift:12,room:8,super:10};
+var S={i:0,t:Number(localStorage.getItem("ahenk_tokens")||80),m:j("ahenk_m",[]),ch:j("ahenk_ch",{}),st:j("ahenk_st",{}),blk:j("ahenk_blk",[]),rooms:j("ahenk_rooms",{}),rmsg:j("ahenk_rmsg",{}),day:localStorage.getItem("ahenk_day")||"",open:null,room:null,hit:null,tab:"k",ok:localStorage.getItem("ahenk_ok")==="1",name:localStorage.getItem("ahenk_nm")||""};
+function today(){return new Date().toISOString().slice(0,10)}
 function vis(){return P.filter(function(x){return S.blk.indexOf(x.id)<0})}
 function find(id){return P.filter(function(z){return z.id===id})[0]}
-function save(){try{localStorage.setItem("ahenk_tokens",S.t);localStorage.setItem("ahenk_m",JSON.stringify(S.m));localStorage.setItem("ahenk_ch",JSON.stringify(S.ch));localStorage.setItem("ahenk_st",JSON.stringify(S.st));localStorage.setItem("ahenk_blk",JSON.stringify(S.blk));localStorage.setItem("ahenk_rooms",JSON.stringify(S.rooms));localStorage.setItem("ahenk_ok",S.ok?"1":"0");localStorage.setItem("ahenk_nm",S.name||"")}catch(e){}document.getElementById("bal").textContent=S.t}
+function save(){try{localStorage.setItem("ahenk_tokens",S.t);localStorage.setItem("ahenk_m",JSON.stringify(S.m));localStorage.setItem("ahenk_ch",JSON.stringify(S.ch));localStorage.setItem("ahenk_st",JSON.stringify(S.st));localStorage.setItem("ahenk_blk",JSON.stringify(S.blk));localStorage.setItem("ahenk_rooms",JSON.stringify(S.rooms));localStorage.setItem("ahenk_rmsg",JSON.stringify(S.rmsg));localStorage.setItem("ahenk_day",S.day);localStorage.setItem("ahenk_ok",S.ok?"1":"0");localStorage.setItem("ahenk_nm",S.name||"")}catch(e){}document.getElementById("bal").textContent=S.t}
 function spend(n){if(S.t<n){alert("Jeton yetersiz");show("p");return false}S.t-=n;save();return true}
+function daily(){if(S.day!==today()){S.day=today();S.t+=20;save();alert("+20 gunluk jeton")}}
+function ava(p){return "<div class='ava' style='background-image:url("+p.p+")'>"+(p.on?"<span class='dot'></span>":"")+"</div>"}
 function show(tab){
- S.tab=tab;
+ S.tab=tab;S.room=tab==="o"?S.room:null;
  document.querySelectorAll(".tab").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-t")===tab)});
  var box=document.getElementById("m");
- if(!S.ok){box.innerHTML="<h2>Turbulans</h2><p class='hint'>18+ sohbet. Pin yok, sadece ad. Jeton bu telefonda.</p><input id='nm' placeholder='Ad' value='"+(S.name||"")+"'><div class='actions'><button class='btn like' id='ok'>18+, gir</button></div>";document.getElementById("ok").onclick=function(){S.name=document.getElementById("nm").value.trim()||"Sen";S.ok=true;save();show("k")};return}
- if(S.hit){var h=find(S.hit);box.innerHTML="<div class='match'><p class='hint'>Uyum</p><div class='ava' style='width:96px;height:96px;border-radius:28px;margin:12px auto;background-image:url("+h.p+")'></div><h2>"+h.n+"</h2><p class='hint'>Sohbet "+C.start+" jeton</p><div class='actions'><button class='btn pass' id='later'>Sonra</button><button class='btn like' id='go'>Sohbet</button></div></div>";document.getElementById("later").onclick=function(){S.hit=null;show("k")};document.getElementById("go").onclick=function(){var id=S.hit;S.hit=null;openChat(id)};return}
+ if(!S.ok){box.innerHTML="<h2>Turbulans</h2><p class='hint'>18+ sohbet. Jeton bu telefonda.</p><input id='nm' placeholder='Ad' value='"+(S.name||"")+"'><div class='actions'><button class='btn like' id='ok'>18+, gir</button></div>";document.getElementById("ok").onclick=function(){S.name=document.getElementById("nm").value.trim()||"Sen";S.ok=true;save();daily();show("k")};return}
+ if(S.hit){var h=find(S.hit);box.innerHTML="<div class='match'><p class='hint'>Uyum</p>"+ava(h)+"<h2>"+h.n+"</h2><p class='hint'>Sohbet "+C.start+" jeton</p><div class='actions'><button class='btn pass' id='later'>Sonra</button><button class='btn like' id='go'>Sohbet</button></div></div>";document.getElementById("later").onclick=function(){S.hit=null;show("k")};document.getElementById("go").onclick=function(){var id=S.hit;S.hit=null;openChat(id)};return}
  if(tab==="k"){
-  var x=vis()[S.i%Math.max(vis().length,1)];if(!vis().length){box.innerHTML="<p class='hint'>Kimse kalmadi.</p>";return}
-  box.innerHTML="<div class='card' style='background-image:url("+x.p+")'><div class='shade'><h2>"+x.n+", "+x.a+"</h2><div>"+x.c+" · "+x.b+"</div></div></div><div class='actions'><button class='btn pass' id='pass'>Gec</button><button class='btn like' id='like'>Uyum</button></div><div class='actions'><button class='btn bad' id='blk'>Engel</button><button class='btn pass' id='rep'>Sikayet</button></div><p class='hint'>mesaj "+C.text+" · not "+C.note+" · ara "+C.call+"/dk · hediye "+C.gift+"</p>";
+  var list=vis();if(!list.length){box.innerHTML="<p class='hint'>Kimse kalmadi.</p>";return}
+  var x=list[S.i%list.length];
+  box.innerHTML="<div class='card' style='background-image:url("+x.p+")'><div class='shade'><h2>"+x.n+", "+x.a+"</h2><div>"+x.c+" · "+x.b+(x.on?" · cevrimici":"")+"</div></div></div><div class='actions'><button class='btn pass' id='pass'>Gec</button><button class='btn like' id='like'>Uyum</button></div><div class='actions'><button class='btn sup' id='sup'>Super 10</button><button class='btn bad' id='blk'>Engel</button></div><p class='hint'>mesaj "+C.text+" · not "+C.note+" · ara "+C.call+"/dk</p>";
   document.getElementById("pass").onclick=function(){S.i++;show("k")};
   document.getElementById("like").onclick=function(){if(S.m.indexOf(x.id)<0)S.m.push(x.id);S.hit=x.id;S.i++;save();show("k")};
+  document.getElementById("sup").onclick=function(){if(!spend(C.super))return;if(S.m.indexOf(x.id)<0)S.m.unshift(x.id);else{S.m=S.m.filter(function(i){return i!==x.id});S.m.unshift(x.id)}S.hit=x.id;S.i++;save();show("k")};
   document.getElementById("blk").onclick=function(){S.blk.push(x.id);S.m=S.m.filter(function(i){return i!==x.id});save();show("k")};
-  document.getElementById("rep").onclick=function(){S.blk.push(x.id);save();alert("Sikayet alindi");show("k")};
  } else if(tab==="s"&&!S.open){
-  var list=S.m.filter(function(id){return S.blk.indexOf(id)<0});
-  if(!list.length){box.innerHTML="<p class='hint'>Eslesme yok. Uyum bas.</p>";return}
-  box.innerHTML=list.map(function(id){var p=find(id);var last=(S.ch[id]||[]).slice(-1)[0];return "<div class='row open' data-id='"+id+"'><div style='display:flex;gap:10px;align-items:center'><div class='ava' style='background-image:url("+p.p+")'></div><div><b>"+p.n+"</b><div class='hint'>"+(last?last.t:("Ac "+C.start))+"</div></div></div></div>"}).join("");
+  var inbox=S.m.filter(function(id){return S.blk.indexOf(id)<0});
+  if(!inbox.length){box.innerHTML="<p class='hint'>Eslesme yok.</p>";return}
+  box.innerHTML=inbox.map(function(id){var p=find(id);var last=(S.ch[id]||[]).slice(-1)[0];return "<div class='row open' data-id='"+id+"'><div style='display:flex;gap:10px;align-items:center'>"+ava(p)+"<div><b>"+p.n+"</b><div class='hint'>"+(last?last.t:("Ac "+C.start))+"</div></div></div></div>"}).join("");
   box.querySelectorAll(".open").forEach(function(el){el.onclick=function(){openChat(el.getAttribute("data-id"))}});
  } else if(tab==="s"){
   var x=find(S.open);var msgs=S.ch[S.open]||[];
-  box.innerHTML="<div class='row'><div class='ava' style='background-image:url("+x.p+")'></div><b>"+x.n+"</b></div>"+msgs.map(function(z){return "<div class='bubble "+z.who+"'>"+z.t+"</div>"}).join("")+"<div class='actions' style='grid-template-columns:1fr auto'><input id='msg' placeholder='Yaz...'><button class='btn like' id='send'>Git</button></div><div class='actions' style='grid-template-columns:1fr 1fr 1fr'><button class='btn pass' id='note'>not</button><button class='btn pass' id='call'>ara</button><button class='btn pass' id='gift'>hediye</button></div><div class='actions'><button class='btn bad' id='blk2'>Engel</button><button class='btn pass' id='back'>Liste</button></div>";
+  box.innerHTML="<div class='row'>"+ava(x)+"<b>"+x.n+"</b></div>"+msgs.map(function(z){return "<div class='bubble "+z.who+"'>"+z.t+"</div>"}).join("")+"<div class='actions' style='grid-template-columns:1fr auto'><input id='msg' placeholder='Yaz...'><button class='btn like' id='send'>Git</button></div><div class='gifts'><button data-g='kahve'>&#9749;</button><button data-g='gece'>&#127769;</button><button data-g='gul'>&#127801;</button></div><div class='actions' style='grid-template-columns:1fr 1fr 1fr'><button class='btn pass' id='note'>not</button><button class='btn pass' id='call'>ara</button><button class='btn pass' id='back'>liste</button></div>";
   document.getElementById("send").onclick=function(){var v=document.getElementById("msg").value.trim();if(!v||!spend(C.text))return;push("me",v);push("them",x.r)};
+  box.querySelectorAll(".gifts button").forEach(function(b){b.onclick=function(){if(!spend(C.gift))return;push("me",b.textContent+" hediye");push("them","Tesekkurler.")}});
   document.getElementById("note").onclick=function(){if(spend(C.note))push("me","video not")};
   document.getElementById("call").onclick=function(){if(spend(C.call))push("them","1 dk gorusme")};
-  document.getElementById("gift").onclick=function(){if(spend(C.gift))push("me","hediye")};
-  document.getElementById("blk2").onclick=function(){S.blk.push(x.id);S.open=null;save();show("s")};
   document.getElementById("back").onclick=function(){S.open=null;show("s")};
- } else if(tab==="o"){
+ } else if(tab==="o"&&!S.room){
   var rooms=[{id:"gece",n:"Gece sohbeti",pay:0},{id:"ist",n:"Istanbul yuruyus",pay:0},{id:"kitap",n:"Kitap kosesi",pay:C.room}];
-  box.innerHTML=rooms.map(function(r){return "<div class='row join' data-id='"+r.id+"' data-pay='"+r.pay+"'><div><b>"+r.n+"</b><div class='hint'>"+(S.rooms[r.id]?"Iceridesin":(r.pay?r.pay+" jeton":"acik"))+"</div></div></div>"}).join("")+"<p class='hint'>Odalar yerel. Canli sonra.</p>";
-  box.querySelectorAll(".join").forEach(function(el){el.onclick=function(){var id=el.getAttribute("data-id");var pay=+el.getAttribute("data-pay");if(!S.rooms[id]&&pay&&!spend(pay))return;S.rooms[id]=1;save();alert(id+" odasindasin");show("o")}});
+  box.innerHTML=rooms.map(function(r){return "<div class='row join' data-id='"+r.id+"' data-pay='"+r.pay+"'><div><b>"+r.n+"</b><div class='hint'>"+(S.rooms[r.id]?"iceride":(r.pay?r.pay+" jeton":"acik"))+"</div></div></div>"}).join("");
+  box.querySelectorAll(".join").forEach(function(el){el.onclick=function(){var id=el.getAttribute("data-id");var pay=+el.getAttribute("data-pay");if(!S.rooms[id]&&pay&&!spend(pay))return;S.rooms[id]=1;if(!S.rmsg[id])S.rmsg[id]=[{who:"them",t:"Odaya hos geldin."}];S.room=id;save();show("o")}});
+ } else if(tab==="o"){
+  var msgs=S.rmsg[S.room]||[];
+  box.innerHTML="<p><b>Oda: "+S.room+"</b></p>"+msgs.map(function(z){return "<div class='bubble "+z.who+"'>"+z.t+"</div>"}).join("")+"<div class='actions' style='grid-template-columns:1fr auto'><input id='msg' placeholder='Odaya yaz'><button class='btn like' id='send'>Git</button></div><p class='hint' id='back'>kapat</p>";
+  document.getElementById("send").onclick=function(){var v=document.getElementById("msg").value.trim();if(!v||!spend(C.text))return;S.rmsg[S.room].push({who:"me",t:v});S.rmsg[S.room].push({who:"them",t:"Oda duydu."});save();show("o")};
+  document.getElementById("back").onclick=function(){S.room=null;show("o")};
  } else if(tab==="p"){
-  box.innerHTML="<p><b>"+(S.name||"-")+"</b></p><p class='hint'>jeton "+S.t+" · eslesme "+S.m.length+" · engel "+S.blk.length+"</p><div class='pack'><b>&#9670; 80</b><button class='btn like add' data-n='80'>Al</button></div><div class='pack'><b>&#9670; 500</b><button class='btn like add' data-n='500'>Al</button></div><div class='pack'><b>&#9670; 2000</b><button class='btn like add' data-n='2000'>Al</button></div><p class='hint'>Odeme yok, sahte paket.</p><div class='actions' style='grid-template-columns:1fr'><button class='btn pass' id='out'>Cikis</button></div>";
+  box.innerHTML="<p><b>"+(S.name||"-")+"</b></p><p class='hint'>jeton "+S.t+" · eslesme "+S.m.length+" · gunluk "+(S.day===today()?"alindi":"+20 hazir")+"</p><div class='pack'><b>&#9670; 80</b><button class='btn like add' data-n='80'>Al</button></div><div class='pack'><b>&#9670; 500</b><button class='btn like add' data-n='500'>Al</button></div><div class='pack'><b>&#9670; 2000</b><button class='btn like add' data-n='2000'>Al</button></div><div class='actions' style='grid-template-columns:1fr'><button class='btn pass' id='day'>Gunluk jeton</button><button class='btn pass' id='out'>Cikis</button></div>";
   box.querySelectorAll(".add").forEach(function(b){b.onclick=function(){S.t+=+b.getAttribute("data-n");save();alert("+"+b.getAttribute("data-n"));show("p")}});
+  document.getElementById("day").onclick=function(){if(S.day===today())alert("Bugun alindi");else daily();show("p")};
   document.getElementById("out").onclick=function(){S.ok=false;save();show("k")}
  }
 }
 function openChat(id){if(!S.ch[id])S.ch[id]=[];if(!S.st[id]){if(!spend(C.start))return;S.st[id]=1;save()}S.open=id;show("s")}
 function push(who,t){S.ch[S.open].push({who:who,t:t});save();show("s")}
-document.querySelectorAll(".tab").forEach(function(b){b.onclick=function(){S.open=null;S.hit=null;show(b.getAttribute("data-t"))}});
+document.querySelectorAll(".tab").forEach(function(b){b.onclick=function(){S.open=null;S.hit=null;S.room=null;show(b.getAttribute("data-t"))}});
 document.getElementById("tb").onclick=function(){S.open=null;S.hit=null;show("p")};
-try{save();show("k")}catch(e){document.getElementById("m").innerHTML="<p class='hint'>"+e.message+"</p>"}
+try{if(S.ok)daily();save();show("k")}catch(e){document.getElementById("m").innerHTML="<p class='hint'>"+e.message+"</p>"}
 </script>
 </body>
 </html>
